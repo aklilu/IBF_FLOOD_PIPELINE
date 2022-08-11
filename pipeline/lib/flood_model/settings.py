@@ -1,9 +1,27 @@
 
+
 ##################
 ## LOAD SECRETS ##
 ##################
+# 1. Try to load secrets from env-variables (i.e. when using Github Actions)
+try:
+    import os    
+    ADMIN_LOGIN = os.environ["ADMIN_LOGIN"]
+    GLOFAS_USER = os.environ["GLOFAS_USER"]
+    GLOFAS_PW = os.environ["GLOFAS_PW"]
+    IBF_URL=os.environ["IBF_URL"]
+    IBF_PASSWORD=os.environ["IBF_PASSWORD"]
+    DATALAKE_STORAGE_ACCOUNT_NAME = os.environ["DATALAKE-STORAGE-ACCOUNT-NAME"]
+    DATALAKE_STORAGE_ACCOUNT_KEY = os.environ["DATALAKE-STORAGE-ACCOUNT-KEY"]
+    DATALAKE_API_VERSION = "2018-11-09"
 
-# 1. Try to load secrets from Azure key vault (i.e. when running through Logic App) if user has access
+except:
+     print('No environment variables found.')
+
+DATALAKE_API_VERSION = '2018-11-09'
+     
+# 2. Try to load secrets from Azure key vault (i.e. when running through Logic App) if user has access
+''' 
 try:
     from azure.identity import DefaultAzureCredential
     from azure.keyvault.secrets import SecretClient
@@ -13,70 +31,34 @@ try:
     ADMIN_LOGIN = secret_client.get_secret("ADMIN-LOGIN").value
     GLOFAS_USER = secret_client.get_secret("GLOFAS-USER").value
     GLOFAS_PW = secret_client.get_secret("GLOFAS-PW").value
-    #GOOGLE_DRIVE_DATA_URL = secret_client.get_secret("GOOGLE-DRIVE-DATA-URL").value
-    UGA_URL=secret_client.get_secret("ZMB-URL").value
-    IBF_URL=secret_client.get_secret("IBF-URL").value
-    ZMB_URL=secret_client.get_secret("ZMB-URL").value
-    ETH_URL=secret_client.get_secret("ZMB-URL").value
-    KEN_URL=secret_client.get_secret("ZMB-URL").value
-    PHL_URL=secret_client.get_secret("PHL-URL-test").value
-    IBF_PASSWORD=secret_client.get_secret("IBF-PASSWORD").value
-    UGA_PASSWORD=secret_client.get_secret("ZMB-PASSWORD").value
-    ZMB_PASSWORD=secret_client.get_secret("ZMB-PASSWORD").value
-    ETH_PASSWORD=secret_client.get_secret("ZMB-PASSWORD").value
-    KEN_PASSWORD=secret_client.get_secret("ZMB-PASSWORD").value
-    PHL_PASSWORD=secret_client.get_secret("PHL-PASSWORD-test").value
     
+    #GOOGLE_DRIVE_DATA_URL = secret_client.get_secret("GOOGLE-DRIVE-DATA-URL").value
+    IBF_URL=secret_client.get_secret("IBF-URL").value
+    IBF_PASSWORD=secret_client.get_secret("IBF-PASSWORD").value
+  
     DATALAKE_STORAGE_ACCOUNT_NAME = secret_client.get_secret("DATALAKE-STORAGE-ACCOUNT-NAME").value
     DATALAKE_STORAGE_ACCOUNT_KEY = secret_client.get_secret("DATALAKE-STORAGE-ACCOUNT-KEY").value
     DATALAKE_API_VERSION = '2018-11-09'
- 
-
 
 except Exception as e:
     print('No access to Azure Key vault, skipping.')
 
-# 2. Try to load secrets from env-variables (i.e. when using Github Actions)
-try:
-    import os
-    
-    ADMIN_LOGIN = os.environ['ADMIN_LOGIN']
-    GLOFAS_USER = os.environ['GLOFAS_USER']
-    GLOFAS_PW = os.environ['GLOFAS_PW']
-    #GOOGLE_DRIVE_DATA_URL = os.environ['GOOGLE_DRIVE_DATA_URL']
-    IBF_URL=os.environ['IBF_API_URL']
-    UGA_URL=os.environ['UGA_URL']
-    ZMB_URL=os.environ['ZMB_URL']
-    ETH_URL=os.environ['ETH_URL']
-    KEN_URL=os.environ['KEN_URL']
-    PHL_URL=os.environ['PHL_URL']
-    UGA_PASSWORD=os.environ['UGA_PASSWORD']
-    IBF_PASSWORD=os.environ['IBF_PASSWORD']
-    ZMB_PASSWORD=os.environ['ZMB_PASSWORD']
-    ETH_PASSWORD=os.environ['ETH_PASSWORD']
-    KEN_PASSWORD=os.environ['KEN_PASSWORD']
-    PHL_PASSWORD=os.environ['PHL_PASSWORD']
-    DATALAKE_STORAGE_ACCOUNT_NAME = os.environ['DATALAKE-STORAGE-ACCOUNT-NAME']
-    DATALAKE_STORAGE_ACCOUNT_KEY = os.environ['DATALAKE-STORAGE-ACCOUNT-KEY']
-    DATALAKE_API_VERSION = '2018-11-09'
 
-except Exception as e:
-    print('No environment variables found.')
 
 # 3. If 1. and 2. both fail, then assume secrets are loaded via secrets.py file (when running locally). If neither of the 3 options apply, this script will fail.
 try:
     from flood_model.secrets import *
 except ImportError:
     print('No secrets file found.')
-
+'''
 
 ######################
 ## COUNTRY SETTINGS ##
 ######################
 
 # Countries to include
-COUNTRY_CODES = ['ETH','ZMB','KEN','UGA']#,'PHL'] #
-
+#COUNTRY_CODES = ['ETH','ZMB','KEN','UGA'] #
+COUNTRY_CODES = ['PHL'] #
 SETTINGS = {
     "ZMB": {
         "IBF_API_URL": IBF_URL,
@@ -159,8 +141,8 @@ SETTINGS = {
         }
     },
     "PHL": {
-        "IBF_API_URL": PHL_URL,
-        "PASSWORD": PHL_PASSWORD,
+        "IBF_API_URL": IBF_URL,
+        "PASSWORD": IBF_PASSWORD,
         "mock": False,
         "if_mock_trigger": False,
         "notify_email": True,
